@@ -1,0 +1,13 @@
+###############################################################################
+###  File yml : Contain some global information for the project ###
+###############################################################################
+
+
+DB:
+  host: "localhost"
+  user: "root"
+  password: "Ingestic13&"
+  database: "openfoodfact"
+
+API: 
+  url : "https://fr.openfoodfacts.org/cgi/search.pl?"
