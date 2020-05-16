@@ -1,3 +1,7 @@
+import abc
+import requests
+
+
 class DataDownloaderInterface(metaclass=abc.ABCMeta):
     @classmethod
     def __subclasshook__(cls, subclass):
@@ -22,9 +26,8 @@ class Product:
     @classmethod
     def create_product(cls, product_list):
         return [cls(**product) for product in product_list]
-    
-    
-    
+
+
 class ProductDownloader:
     def __init__(self, url, headers, payload):
         self.url = url
@@ -35,7 +38,8 @@ class ProductDownloader:
         response = requests.request(
             "GET", self.url, headers=self.headers, params=self.payload)
         return response.json()
-    
+
+
 class ProductCleaner:
     def __init__(self):
         pass

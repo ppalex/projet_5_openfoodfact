@@ -1,3 +1,9 @@
+
+import Configuration.config as config
+
+config.load('./configuration/config.yml')
+
+
 class Payload:
     def __init__(self, action, tag_0, tag_contains_0, tagtype_0, page_size,
                  json):
