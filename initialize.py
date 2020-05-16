@@ -1,2 +1,14 @@
+from Model.database import Database
+from Model.manager import DatabaseManager
+
+import pdb
+
+
 def initialize_job():
-    pass
+    db = Database.get_db()
+    
+    db_manager = DatabaseManager()
+    pdb.set_trace()
+    db_manager.create_tables()
+    
+    db.close_conn()
