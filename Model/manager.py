@@ -1,4 +1,6 @@
 from Model.database import Database
+from Model.product import ProductDownloader, ProductCleaner
+from Model.api import Payload
 
 import Configuration.config as config
 
@@ -37,7 +39,6 @@ class DatabaseManager(Database):
         self.store_manager.create_store_table(db)
         self.product_category_manager.create_product_category_table(db)
         self.product_store_manager.create_product_store_table(db)
-        pdb.set_trace()
 
     def get_tables(self):
         db = self.get_db()
@@ -70,19 +71,29 @@ class ApiManager:
     def __init__(self):
         self.data = None
 
-    def download_data_job(self, category_list):
+    def download_product(self, category_list):
 
         url = config.value['API']['url']
         headers = {}
         data = []
 
         for category in category_list:
-            pass
+            payload = Payload(action=config.value['PAYLOAD']['action'],
+                              tag_0=category,
+                              tag_contains_0=config.value['PAYLOAD']['tag_contains_0'],
+                              tagtype_0=config.value['PAYLOAD']['tagtype_0'],
+                              page_size=config.value['PAYLOAD']['page_size'],
+                              json=config.value['PAYLOAD']['json'])
+
+            product_downloader = ProductDownloader(
+                url, headers, payload.get_payload_formatted())
+            products_data = product_downloader.load_data_source()
+            product_cleaner = ProductCleaner.create(
+                products_data, category)
+            ProductCleaner.format_categories(product_cleaner)
+            data += product_cleaner
 
         self.data = data
-
-    def get_product(self):
-        return self.data
 
     def get_all_categories(self):
         product_list = self.data
@@ -116,8 +127,7 @@ class ProductManager():
         db.commit()
         cursor.close()
 
-    def insert_product_db(self, product_list):
-        db = self.get_db()
+    def insert_product_db(product_list, db):
         cursor = db.cursor()
 
         for product in product_list:

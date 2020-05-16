@@ -12,8 +12,6 @@ class DataDownloaderInterface(metaclass=abc.ABCMeta):
 class Product:
     def __init__(self, **product_attributes):
         for attr_name, attr_value in product_attributes.items():
-            if attr_name == 'categories':
-                attr_value = attr_value.split(',')
             setattr(self, attr_name, attr_value)
 
     def __str__(self):
