@@ -35,3 +35,30 @@ class ProductDownloader:
         response = requests.request(
             "GET", self.url, headers=self.headers, params=self.payload)
         return response.json()
+    
+class ProductCleaner:
+    def __init__(self):
+        pass
+
+    def create(products, category):
+
+        product_list = [
+            Product(**{
+                'barcode': product.get('id', None),
+                'product_name': product.get('product_name', None),
+                'category': category,
+                'nutriscore_grade': product.get('nutriscore_grade', None),
+                'categories': product.get('categories', None).split(','),
+                'stores': product.get('stores_tags', []),
+                'description': product.get('ingredients_text_debug', None),
+                'off_url': product.get('url', None)}
+            ) for product in products['products']]
+
+        return product_list
+
+    def format_categories(product_list):
+        for product in product_list:
+            categories = []
+            for category in product.categories:
+                categories.append(category.lstrip().rstrip())
+            setattr(product, 'categories', categories)
