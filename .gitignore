@@ -2,3 +2,4 @@ envs
 Configuration/config.yml
 */__pycache__/
 *.pyc
+/.vscode/

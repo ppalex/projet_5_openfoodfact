@@ -20,7 +20,7 @@ class DatabaseManager(Database):
     def get_db(self):
         return self.db
 
-    def cursor(self, dic=False):
+    def cursor(self, dic=True):
         return self.db.cursor(dictionary=dic)
 
     def commit(self):
@@ -167,8 +167,8 @@ class ProductManager():
         return data
 
     @staticmethod
-    def select_product_from_category_db(db, limit, category_value):
-        cursor = db.cursor()
+    def get_product_by_category_db(db_manager, limit, category_value):
+        cursor = db_manager.cursor()
         sql = f"""SELECT product_name, product.barcode FROM product
                     INNER JOIN product_category
                     ON product.id = product_category.product_id
