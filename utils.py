@@ -16,7 +16,6 @@ def format_request(dic_data):
     return dic
 
 
-
 def filter(product_list, n_ref):
 
     nutriscore_ref = ['a', 'b', 'c', 'd', 'e']
@@ -43,7 +42,7 @@ def check_intersection(product_list, product_selected):
             set(product.categories).intersection(product_selected.categories))
         intersection_best_product = list(
             set(best_product.categories).intersection(
-                                            product_selected.categories))
+                product_selected.categories))
 
         if len(intersection_product) > len(intersection_best_product):
             best_product = product

@@ -81,7 +81,7 @@ class Controller:
         product = self.product_manager.get_product_db(
             self.db_manager,
             product_barcode)
-        
+
         product = Product(**product)
         ProductCleaner.split_string(product)
         nutriscore = product.nutriscore_grade
@@ -96,7 +96,7 @@ class Controller:
 
         for substitute in substitute_list:
             print(substitute)
-        
+
         substitute = utils.check_intersection(substitute_list, product)
         print("RESULT:")
         print(product)

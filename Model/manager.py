@@ -9,6 +9,7 @@ config.load('./configuration/config.yml')
 
 # Database MANAGER  #
 
+
 class DatabaseManager(Database):
     def __init__(self):
         self.category_manager = CategoryManager()
@@ -67,6 +68,8 @@ class DatabaseManager(Database):
 
 
 # API MANAGER  #
+
+
 class ApiManager:
     def __init__(self):
         self.data = None
@@ -78,12 +81,13 @@ class ApiManager:
         data = []
 
         for category in category_list:
-            payload = Payload(action=config.value['PAYLOAD']['action'],
-                              tag_0=category,
-                              tag_contains_0=config.value['PAYLOAD']['tag_contains_0'],
-                              tagtype_0=config.value['PAYLOAD']['tagtype_0'],
-                              page_size=config.value['PAYLOAD']['page_size'],
-                              json=config.value['PAYLOAD']['json'])
+            payload = Payload(
+                action=config.value['PAYLOAD']['action'],
+                tag_0=category,
+                tag_contains_0=config.value['PAYLOAD']['tag_contains_0'],
+                tagtype_0=config.value['PAYLOAD']['tagtype_0'],
+                page_size=config.value['PAYLOAD']['page_size'],
+                json=config.value['PAYLOAD']['json'])
 
             product_downloader = ProductDownloader(
                 url, headers, payload.get_payload_formatted())
@@ -227,6 +231,8 @@ class ProductManager():
 
 
 # Catagory MANAGER #
+
+
 class CategoryManager():
     def __init__(self):
         pass
@@ -295,6 +301,7 @@ class StoreManager():
 
 # Product_Category MANAGER #
 
+
 class ProductCategoryManager():
 
     def __init__(self):
@@ -336,6 +343,8 @@ class ProductCategoryManager():
 
 
 # Product_Category MANAGER #
+
+
 class ProductStoreManager():
     def __init__(self):
         pass
