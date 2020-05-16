@@ -1,10 +1,12 @@
 import argparse
 
 from jobs import initialize_job, drop_tables_job
+from Controller.controller import Controller
 
 
 def main():
-    pass
+    controller = Controller()
+    controller.init()
 
 
 if __name__ == "__main__":
