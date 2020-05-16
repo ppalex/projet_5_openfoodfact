@@ -1,13 +1,10 @@
-from database import Database
+from Model.database import Database
 
 import Configuration.config as config
 
 config.load('./configuration/config.yml')
 
-
-class DatabaseManager(Database):
-    def __init__(self):
-        super()
+# API MANAGER  #
 
 
 class ApiManager:
@@ -38,5 +35,325 @@ class ApiManager:
 
         return [store for product in product_list
                 for store in product.stores]
+
+# PRODUCT MANAGER #
+
+
+class ProductManager(Database):
+    def __init__(self):
+        super()
+
+    def create_product_table(self):
+        db = self.get_db()
+
+        cursor = db.cursor()
+        sql = "CREATE TABLE IF NOT EXISTS Product ( \
+            id SMALLINT AUTO_INCREMENT PRIMARY KEY, \
+            barcode VARCHAR(50) NOT NULL UNIQUE, \
+            product_name VARCHAR(255) NOT NULL, \
+            nutriscore_grade CHAR(1) NOT NULL, \
+            product_description TEXT NOT NULL, \
+            off_url VARCHAR(255) NOT NULL)"
+
+        cursor.execute(sql)
+        db.commit()
+        cursor.close()
+
+    def insert_product_db(self, product_list):
+        db = self.get_db()
+        cursor = db.cursor()
+
+        for product in product_list:
+            sql = """INSERT INTO Product (barcode,
+                                            product_name,
+                                            nutriscore_grade,
+                                            product_description,
+                                            off_url)
+                        VALUES (%s, %s, %s, %s, %s)"""
+
+            values = (product.barcode,
+                      product.product_name,
+                      product.nutriscore_grade,
+                      product.description,
+                      product.off_url)
+
+            try:
+                cursor.execute(sql, values)
+            except Exception as e:
+                print(e)
+
+            db.commit()
+        cursor.close()
+
+    @staticmethod
+    def select_product_db(db, limit):
+        cursor = db.cursor()
+
+        sql = f"""SELECT product_name FROM product
+                 ORDER BY RAND() LIMIT {limit}
+                """
+
+        cursor.execute(sql)
+        data = cursor.fetchall()
+        cursor.close()
+
+        return data
+
+    @staticmethod
+    def select_product_from_category_db(db, limit, category_value):
+        cursor = db.cursor()
+        sql = f"""SELECT product_name, product.barcode FROM product
+                    INNER JOIN product_category
+                    ON product.id = product_category.product_id
+                        INNER JOIN category
+                        ON category.id = product_category.category_id
+                    WHERE category.category_name = %s
+                    ORDER BY RAND() LIMIT {limit}
+                    """
+        values = (category_value,)
+        cursor.execute(sql, values)
+        data = cursor.fetchall()
+        cursor.close()
+
+        return data
+
+    @staticmethod
+    def select_one_product_db(db, barcode):
+        cursor = db.cursor(dic=True)
+        sql = """SELECT product_id, barcode, product_name, nutriscore_grade,
+                    GROUP_CONCAT(category_name SEPARATOR ',') AS categories
+                    FROM product
+                    INNER JOIN product_category
+                    ON product.id = product_category.product_id
+                        INNER JOIN category
+                        ON category.id = product_category.category_id
+                WHERE product.barcode = %s
+                GROUP BY product_id
+                """
+
+        values = (barcode,)
+        cursor.execute(sql, values)
+        data = cursor.fetchone()
+        cursor.close()
+
+        return data
+
+    @staticmethod
+    def select_all_product_nutriscore_db(db, nutriscrore, category):
+        cursor = db.cursor(dic=True)
+        sql = """SELECT product_id, barcode, product_name, nutriscore_grade,
+                    GROUP_CONCAT(category_name SEPARATOR ',') AS categories
+                    FROM product
+                    INNER JOIN product_category
+                    ON product.id = product_category.product_id
+                        INNER JOIN category
+                        ON category.id = product_category.category_id
+                    WHERE product.nutriscore_grade < %s
+                    GROUP BY product_id
+                    HAVING categories LIKE CONCAT('%', %s, '%')
+                """
+
+        values = (nutriscrore, category)
+        cursor.execute(sql, values)
+        data = cursor.fetchall()
+        cursor.close()
+
+        return data
+
+
+# Catagory MANAGER #
+class CategoryManager(Database):
+    def __init__(self):
+        super()
+
+    def create_category_table(self):
+        db = self.get_db()
+        cursor = db.cursor()
+        sql = "CREATE TABLE IF NOT EXISTS Category ( \
+                id SMALLINT AUTO_INCREMENT PRIMARY KEY, \
+                category_name VARCHAR(255) NOT NULL UNIQUE)"
+        cursor.execute(sql)
+        db.commit()
+        cursor.close()
+
+    def insert_categories_db(category_list, db):
+        cursor = db.cursor()
+
+        for category in category_list:
+            sql = "INSERT IGNORE INTO Category (category_name) VALUES (%s)"
+            values = category
+            cursor.execute(sql, (values,))
+            db.commit()
+        cursor.close()
+
+    @staticmethod
+    def select_category_db(db, limit):
+        cursor = db.cursor()
+
+        sql = f"""SELECT category_name FROM category
+                 ORDER BY RAND() LIMIT {limit}
+                """
+
+        cursor.execute(sql)
+        data = cursor.fetchall()
+        cursor.close()
+
+        return data
+
+# Store MANAGER #
+
+
+class StoreManager:
+    def __init__(self):
+        pass
+
+    def create_store_table(self):
+        db = self.get_db()
+        cursor = db.cursor()
+        sql = """CREATE TABLE IF NOT EXISTS Store (
+                id SMALLINT AUTO_INCREMENT PRIMARY KEY,
+                store_name VARCHAR(255) NOT NULL UNIQUE)
+                """
+
+        cursor.execute(sql)
+        db.commit()
+        cursor.close()
+
+    def insert_store_db(store_list, db):
+        cursor = db.cursor()
+
+        for store in store_list:
+            sql = "INSERT IGNORE INTO Store (store_name) VALUES (%s)"
+            values = store
+            cursor.execute(sql, (values,))
+            db.commit()
+        cursor.close()
+
+
+# Product_Category MANAGER #
+
+class ProductCategoryManager(Database):
+
+    def __init__(self):
+        super()
+
+    def create_product_category_table(self):
+        db = self.get_db()
+        cursor = db.cursor()
+
+        sql = """CREATE TABLE IF NOT EXISTS Product_Category ( \
+                product_id SMALLINT NOT NULL, \
+                category_id SMALLINT NOT NULL, \
+                CONSTRAINT pk_ProductStore PRIMARY KEY \
+                (product_id, category_id))
+                """
+
+        cursor.execute(sql)
+        db.commit()
+        cursor.close()
+
+    def insert_product_category_db(product_list, db):
+        cursor = db.cursor()
+
+        for product in product_list:
+            for category in product.categories:
+                sql = """INSERT INTO product_category (product_id, category_id)
+                    SELECT DISTINCT product.id, category.id
+                    FROM product, category
+                    WHERE category.category_name = %s AND product.barcode = %s
+                """
+
+                values = (category, product.barcode)
+
+                try:
+                    cursor.execute(sql, values)
+                except Exception as e:
+                    print(e)
+                db.commit()
+        cursor.close()
+
+
+# Product_Category MANAGER #
+class ProductStoreManager(Database):
+    def __init__(self):
+        super()
+
+    def create_product_store_table(self):
+        db = self.get_db()
+        cursor = db.cursor()
+        sql = """CREATE TABLE IF NOT EXISTS Product_Store ( \
+                product_id SMALLINT NOT NULL, \
+                store_id SMALLINT NOT NULL, \
+                CONSTRAINT pk_ProductStore PRIMARY KEY (product_id, store_id))
+                """
+        cursor.execute(sql)
+        db.commit()
+        cursor.close()
+
+    def insert_product_store_db(product_list, db):
+        cursor = db.cursor()
+
+        for product in product_list:
+            for store in product.stores:
+                sql = """INSERT INTO product_store (product_id, store_id)
+                    SELECT DISTINCT product.id, store.id
+                    FROM product, store
+                    WHERE store.store_name = %s AND product.barcode = %s
+                """
+
+                values = (store, product.barcode)
+
+                try:
+                    cursor.execute(sql, values)
+                except Exception as e:
+                    print(e)
+
+                db.commit()
+
+        cursor.close()
+
+# Database MANAGER  #
+
+
+class DatabaseManager():
+    def __init__(self):
+        super().__init__()
+        self.category_manager = CategoryManager()
+        self.product_manager = ProductManager()
+        self.store_manager = StoreManager()
+        self.product_category_manager = ProductCategoryManager()
+        self.product_store_manager = ProductStoreManager()
+
+    def create_tables(self):
         
-        
+        self.category_manager.create_category_table()
+        self.product_manager.create_product_table()
+        self.store_manager.create_store_table()
+        self.product_category_manager.create_product_category_table()
+        self.product_store_manager.create_product_store_table()
+        pdb.set_trace()
+
+    def get_tables(self):
+        db = self.get_db()
+        cursor = db.cursor()
+        sql = "SHOW TABLES"
+        cursor.execute(sql)
+        data = cursor.fetchall()
+
+        return data
+
+    def drop_tables(self):
+        db = self.get_db()
+        cursor = db.cursor()
+        table_list = self.get_tables(db)
+
+        sql = "DROP TABLE IF EXISTS"
+        values = ()
+
+        for table in table_list:
+            sql += " %s,"
+            values += table
+        sql = sql % values
+        sql = sql[:-1]
+
+        cursor.execute(sql)

@@ -19,8 +19,9 @@ class Database:
 
         return self._instance
 
-    def get_db(self):
-        return self.db
+    @classmethod
+    def get_db(cls):
+        return cls()
 
     def cursor(self, dic=False):
         return self.db.cursor(dictionary=dic)
@@ -28,5 +29,8 @@ class Database:
     def commit(self):
         self.db.commit()
 
-    def close(self):
+    def close_cur(self):
         self.cursor.close()
+
+    def close_conn(self):
+        self.db.close()
