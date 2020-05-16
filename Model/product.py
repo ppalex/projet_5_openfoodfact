@@ -22,3 +22,16 @@ class Product:
     @classmethod
     def create_product(cls, product_list):
         return [cls(**product) for product in product_list]
+    
+    
+    
+class ProductDownloader:
+    def __init__(self, url, headers, payload):
+        self.url = url
+        self.headers = headers
+        self.payload = payload
+
+    def load_data_source(self):
+        response = requests.request(
+            "GET", self.url, headers=self.headers, params=self.payload)
+        return response.json()
