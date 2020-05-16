@@ -1,2 +1,3 @@
 envs
 Configuration/config.yml
+*/__pycache__/
