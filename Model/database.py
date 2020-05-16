@@ -18,19 +18,3 @@ class Database:
                 auth_plugin='mysql_native_password')
 
         return self._instance
-
-    @classmethod
-    def get_db(cls):
-        return cls()
-
-    def cursor(self, dic=False):
-        return self.db.cursor(dictionary=dic)
-
-    def commit(self):
-        self.db.commit()
-
-    def close_cur(self):
-        self.cursor.close()
-
-    def close_conn(self):
-        self.db.close()

@@ -4,9 +4,68 @@ import Configuration.config as config
 
 config.load('./configuration/config.yml')
 
+
+# Database MANAGER  #
+
+class DatabaseManager(Database):
+    def __init__(self):
+        self.category_manager = CategoryManager()
+        self.product_manager = ProductManager()
+        self.store_manager = StoreManager()
+        self.product_category_manager = ProductCategoryManager()
+        self.product_store_manager = ProductStoreManager()
+
+    def get_db(self):
+        return self.db
+
+    def cursor(self, dic=False):
+        return self.db.cursor(dictionary=dic)
+
+    def commit(self):
+        self.db.commit()
+
+    def close_cur(self):
+        self.cursor.close()
+
+    def close_conn(self):
+        self.db.close()
+
+    def create_tables(self):
+        db = self.get_db()
+        self.category_manager.create_category_table(db)
+        self.product_manager.create_product_table(db)
+        self.store_manager.create_store_table(db)
+        self.product_category_manager.create_product_category_table(db)
+        self.product_store_manager.create_product_store_table(db)
+        pdb.set_trace()
+
+    def get_tables(self):
+        db = self.get_db()
+        cursor = db.cursor()
+        sql = "SHOW TABLES"
+        cursor.execute(sql)
+        data = cursor.fetchall()
+
+        return data
+
+    def drop_tables(self):
+        db = self.get_db()
+        cursor = db.cursor()
+        table_list = self.get_tables()
+
+        sql = "DROP TABLE IF EXISTS"
+        values = ()
+
+        for table in table_list:
+            sql += " %s,"
+            values += table
+        sql = sql % values
+        sql = sql[:-1]
+
+        cursor.execute(sql)
+
+
 # API MANAGER  #
-
-
 class ApiManager:
     def __init__(self):
         self.data = None
@@ -39,13 +98,11 @@ class ApiManager:
 # PRODUCT MANAGER #
 
 
-class ProductManager(Database):
+class ProductManager():
     def __init__(self):
-        super()
+        pass
 
-    def create_product_table(self):
-        db = self.get_db()
-
+    def create_product_table(self, db):
         cursor = db.cursor()
         sql = "CREATE TABLE IF NOT EXISTS Product ( \
             id SMALLINT AUTO_INCREMENT PRIMARY KEY, \
@@ -162,12 +219,11 @@ class ProductManager(Database):
 
 
 # Catagory MANAGER #
-class CategoryManager(Database):
+class CategoryManager():
     def __init__(self):
-        super()
+        pass
 
-    def create_category_table(self):
-        db = self.get_db()
+    def create_category_table(self, db):
         cursor = db.cursor()
         sql = "CREATE TABLE IF NOT EXISTS Category ( \
                 id SMALLINT AUTO_INCREMENT PRIMARY KEY, \
@@ -203,12 +259,11 @@ class CategoryManager(Database):
 # Store MANAGER #
 
 
-class StoreManager:
+class StoreManager():
     def __init__(self):
         pass
 
-    def create_store_table(self):
-        db = self.get_db()
+    def create_store_table(self, db):
         cursor = db.cursor()
         sql = """CREATE TABLE IF NOT EXISTS Store (
                 id SMALLINT AUTO_INCREMENT PRIMARY KEY,
@@ -232,13 +287,12 @@ class StoreManager:
 
 # Product_Category MANAGER #
 
-class ProductCategoryManager(Database):
+class ProductCategoryManager():
 
     def __init__(self):
-        super()
+        pass
 
-    def create_product_category_table(self):
-        db = self.get_db()
+    def create_product_category_table(self, db):
         cursor = db.cursor()
 
         sql = """CREATE TABLE IF NOT EXISTS Product_Category ( \
@@ -274,12 +328,11 @@ class ProductCategoryManager(Database):
 
 
 # Product_Category MANAGER #
-class ProductStoreManager(Database):
+class ProductStoreManager():
     def __init__(self):
-        super()
+        pass
 
-    def create_product_store_table(self):
-        db = self.get_db()
+    def create_product_store_table(self, db):
         cursor = db.cursor()
         sql = """CREATE TABLE IF NOT EXISTS Product_Store ( \
                 product_id SMALLINT NOT NULL, \
@@ -311,49 +364,3 @@ class ProductStoreManager(Database):
                 db.commit()
 
         cursor.close()
-
-# Database MANAGER  #
-
-
-class DatabaseManager():
-    def __init__(self):
-        super().__init__()
-        self.category_manager = CategoryManager()
-        self.product_manager = ProductManager()
-        self.store_manager = StoreManager()
-        self.product_category_manager = ProductCategoryManager()
-        self.product_store_manager = ProductStoreManager()
-
-    def create_tables(self):
-        
-        self.category_manager.create_category_table()
-        self.product_manager.create_product_table()
-        self.store_manager.create_store_table()
-        self.product_category_manager.create_product_category_table()
-        self.product_store_manager.create_product_store_table()
-        pdb.set_trace()
-
-    def get_tables(self):
-        db = self.get_db()
-        cursor = db.cursor()
-        sql = "SHOW TABLES"
-        cursor.execute(sql)
-        data = cursor.fetchall()
-
-        return data
-
-    def drop_tables(self):
-        db = self.get_db()
-        cursor = db.cursor()
-        table_list = self.get_tables(db)
-
-        sql = "DROP TABLE IF EXISTS"
-        values = ()
-
-        for table in table_list:
-            sql += " %s,"
-            values += table
-        sql = sql % values
-        sql = sql[:-1]
-
-        cursor.execute(sql)
