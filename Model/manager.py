@@ -27,7 +27,7 @@ class DatabaseManager(Database):
         self.db.commit()
 
     def close_cur(self):
-        self.cursor.close()
+        self.db.cursor.close()
 
     def close_conn(self):
         self.db.close()
@@ -167,8 +167,8 @@ class ProductManager():
         return data
 
     @staticmethod
-    def get_product_by_category_db(db_manager, limit, category_value):
-        cursor = db_manager.cursor()
+    def get_product_list_by_category_db(db_manager, limit, category_value):
+        cursor = db_manager.get_db().cursor(dictionary=True)
         sql = f"""SELECT product_name, product.barcode FROM product
                     INNER JOIN product_category
                     ON product.id = product_category.product_id
@@ -181,12 +181,11 @@ class ProductManager():
         cursor.execute(sql, values)
         data = cursor.fetchall()
         cursor.close()
-
         return data
 
     @staticmethod
-    def select_one_product_db(db, barcode):
-        cursor = db.cursor(dic=True)
+    def get_product_db(db_manager, barcode):
+        cursor = db_manager.get_db().cursor(dictionary=True)
         sql = """SELECT product_id, barcode, product_name, nutriscore_grade,
                     GROUP_CONCAT(category_name SEPARATOR ',') AS categories
                     FROM product
@@ -202,12 +201,11 @@ class ProductManager():
         cursor.execute(sql, values)
         data = cursor.fetchone()
         cursor.close()
-
         return data
 
     @staticmethod
-    def select_all_product_nutriscore_db(db, nutriscrore, category):
-        cursor = db.cursor(dic=True)
+    def get_products_by_nutriscore_db(db_manager, nutriscrore, category):
+        cursor = db_manager.get_db().cursor(dictionary=True)
         sql = """SELECT product_id, barcode, product_name, nutriscore_grade,
                     GROUP_CONCAT(category_name SEPARATOR ',') AS categories
                     FROM product

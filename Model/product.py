@@ -64,3 +64,11 @@ class ProductCleaner:
             for category in product.categories:
                 categories.append(category.lstrip().rstrip())
             setattr(product, 'categories', categories)
+
+    def split_categories(self, product_list):
+        for product in product_list:
+            self.split_string(product)
+
+    @staticmethod
+    def split_string(product):
+        setattr(product, 'categories', product.categories.split(','))
