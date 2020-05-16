@@ -20,10 +20,8 @@ Description du projet
 
 ## Fonctionnalités
 
-"En tant qu'utilisateur, je veux rechercher un substitut pour un produit choisi par categories, de manière à rendre mon alimentation plus saine."
-
-Une tâche:
-- créer une base de donnée de catégories
-Sous-tâches:
-    - créer un table catégorie
-    - insérer des catégories dans la table
+* Récupérer les données d’OpenFoodFact
+    * Créer une interface avec l’API
+    * Créer un payload
+    * Nettoyer les données récupérées
+    * Formatter les données récupérées
