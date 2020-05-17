@@ -2,7 +2,7 @@ import Configuration.config as config
 import utils
 from Model.product import Product, ProductCleaner
 from Model.manager import DatabaseManager, ProductManager, \
-    CategoryManager, StoreManager
+    CategoryManager, StoreManager, ProductSubstituteManager
 
 from View.views import View_Category, View_Product, View_Substitute
 
@@ -16,6 +16,7 @@ class Controller:
         self.product_manager = ProductManager()
         self.category_manager = CategoryManager()
         self.store_manager = StoreManager()
+        self.product_substitute_manager = ProductSubstituteManager()
 
     def init(self):
 
@@ -72,18 +73,25 @@ class Controller:
 
         substitute = self.find_substitute(product_barcode, category_value)
 
-        self.substitute_menu(substitute, product_barcode)
+        self.substitute_menu(substitute, product)
 
-    def substitute_menu(self, substitute, product_barcode):
+    def substitute_menu(self, substitute, product):
         print("Substitut trouvé: \n")
 
         view = View_Substitute(substitute)
         value = ""
         print(view)
         print("Voulez-vous enregistrer le substitut dans vos favoris?")
-        print("O/N")
-        while value not in ["O", "N", "o", "n"]:
+        print("o/n")
+        while value not in ["o", "n"]:
             value = input()
+
+        if value == "o":
+            product_id = product.
+            self.product_substitute_manager.insert_product_substitute_db()
+
+        elif value == "n":
+            print("Merci et à bientôt")
 
     def find_substitute(self, product_barcode, category_value):
 

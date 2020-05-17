@@ -228,7 +228,7 @@ class ProductManager():
         cursor.close()
 
         return data
-    
+
     @staticmethod
     def get_product_by_store_db(db_manager, limit, category_value):
         cursor = db_manager.get_db().cursor(dictionary=True)
@@ -397,4 +397,40 @@ class ProductStoreManager():
 
                 db.commit()
 
+        cursor.close()
+
+
+# Product_Substitute MANAGER #
+
+class ProductSubstituteManager():
+    def __init__(self):
+        pass
+
+    def create_product_substitute_table(self, db):
+        cursor = db.cursor()
+        sql = """CREATE TABLE IF NOT EXISTS Product_Subsitute ( \
+                product_id SMALLINT NOT NULL, \
+                substitute_id SMALLINT NOT NULL, \
+                    CONSTRAINT pk_ProductSubstitute \
+                    PRIMARY KEY (product_id, substitute_id))
+                """
+        cursor.execute(sql)
+        db.commit()
+        cursor.close()
+
+    def insert_product_substitute_db(product_id, substitute_id, db):
+        cursor = db.cursor()
+
+        sql = """INSERT INTO product_substitute (product_id, substitute_id)
+            VALUES (%s, %s)
+        """
+
+        values = (product_id, substitute_id)
+
+        try:
+            cursor.execute(sql, values)
+        except Exception as e:
+            print(e)
+
+        db.commit()
         cursor.close()
