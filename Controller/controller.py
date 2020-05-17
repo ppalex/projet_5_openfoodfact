@@ -68,8 +68,8 @@ class Controller:
             print(view)
             value = input()
 
-        product = products[int(value)]
-        product_barcode = product['barcode']
+        product = Product(**products[int(value)])
+        product_barcode = product.barcode
 
         substitute = self.find_substitute(product_barcode, category_value)
 
@@ -87,8 +87,12 @@ class Controller:
             value = input()
 
         if value == "o":
-            product_id = product.
-            self.product_substitute_manager.insert_product_substitute_db()
+            product_id = product.product_id
+            substitute_id = substitute.product_id
+            db = self.db_manager.get_db()
+
+            ProductSubstituteManager.insert_product_substitute_db(
+                product_id, substitute_id, db)
 
         elif value == "n":
             print("Merci et à bientôt")

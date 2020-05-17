@@ -22,7 +22,7 @@ class View_Product(View):
     def __str__(self):
         rpr = ""
         for k, v in self.data.items():
-            rpr += f"{k} - {v['product_name'] - v['nutriscore_grade']} \n"
+            rpr += f"{k} - {v['product_name']} - {v['nutriscore_grade']} \n"
 
         return rpr
 

@@ -17,6 +17,7 @@ class DatabaseManager(Database):
         self.store_manager = StoreManager()
         self.product_category_manager = ProductCategoryManager()
         self.product_store_manager = ProductStoreManager()
+        self.product_substitute_manager = ProductSubstituteManager()
 
     def get_db(self):
         return self.db
@@ -40,6 +41,7 @@ class DatabaseManager(Database):
         self.store_manager.create_store_table(db)
         self.product_category_manager.create_product_category_table(db)
         self.product_store_manager.create_product_store_table(db)
+        self.product_substitute_manager.create_product_substitute_table(db)
 
     def get_tables(self):
         db = self.get_db()
@@ -173,7 +175,8 @@ class ProductManager():
     @staticmethod
     def get_product_list_by_category_db(db_manager, limit, category_value):
         cursor = db_manager.get_db().cursor(dictionary=True)
-        sql = f"""SELECT product_name, product.barcode FROM product
+        sql = f"""SELECT product_id, product_name, product.barcode, product.nutriscore_grade
+                    FROM product
                     INNER JOIN product_category
                     ON product.id = product_category.product_id
                         INNER JOIN category
@@ -408,7 +411,7 @@ class ProductSubstituteManager():
 
     def create_product_substitute_table(self, db):
         cursor = db.cursor()
-        sql = """CREATE TABLE IF NOT EXISTS Product_Subsitute ( \
+        sql = """CREATE TABLE IF NOT EXISTS Product_Substitute ( \
                 product_id SMALLINT NOT NULL, \
                 substitute_id SMALLINT NOT NULL, \
                     CONSTRAINT pk_ProductSubstitute \
