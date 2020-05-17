@@ -48,3 +48,32 @@ def check_intersection(product_list, product_selected):
             best_product = product
 
     return best_product
+
+
+def find_substitute(self, product_barcode, category_value):
+
+    product = self.product_manager.get_product_db(
+        self.db_manager,
+        product_barcode)
+
+    product = Product(**product)
+    ProductCleaner.split_string(product)
+    nutriscore = product.nutriscore_grade
+
+    product_list = self.product_manager.get_products_by_nutriscore_db(
+        self.db_manager, nutriscore, category_value)
+
+    product_list = Product.create_product(product_list)
+    ProductCleaner().split_categories(product_list)
+
+    substitute_list = filter(product_list, nutriscore)
+
+    for substitute in substitute_list:
+        print(substitute)
+
+    substitute = check_intersection(substitute_list, product)
+    # print("RESULT:")
+    # print(product)
+    # print(substitute)
+
+    return substitute

@@ -4,7 +4,7 @@ from Model.product import Product, ProductCleaner
 from Model.manager import DatabaseManager, ProductManager, \
     CategoryManager, StoreManager
 
-from View.views import View_Category, View_Product
+from View.views import View_Category, View_Product, View_Substitute
 
 
 config.load('./configuration/config.yml')
@@ -70,13 +70,22 @@ class Controller:
         product = products[int(value)]
         product_barcode = product['barcode']
 
-        self.find_product(product_barcode, category_value)
-        self.db_manager.close_conn()
+        substitute = self.find_substitute(product_barcode, category_value)
 
-    def substitute_menu(self, product):
-        pass
+        self.substitute_menu(substitute, product_barcode)
 
-    def find_product(self, product_barcode, category_value):
+    def substitute_menu(self, substitute, product_barcode):
+        print("Substitut trouvé: \n")
+
+        view = View_Substitute(substitute)
+        value = ""
+        print(view)
+        print("Voulez-vous enregistrer le substitut dans vos favoris?")
+        print("O/N")
+        while value not in ["O", "N", "o", "n"]:
+            value = input()
+
+    def find_substitute(self, product_barcode, category_value):
 
         product = self.product_manager.get_product_db(
             self.db_manager,
@@ -94,10 +103,9 @@ class Controller:
 
         substitute_list = utils.filter(product_list, nutriscore)
 
-        for substitute in substitute_list:
-            print(substitute)
+        # for substitute in substitute_list:
+        #     print(substitute)
 
         substitute = utils.check_intersection(substitute_list, product)
-        print("RESULT:")
-        print(product)
-        print(substitute)
+
+        return substitute

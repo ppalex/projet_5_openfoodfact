@@ -228,6 +228,23 @@ class ProductManager():
         cursor.close()
 
         return data
+    
+    @staticmethod
+    def get_product_by_store_db(db_manager, limit, category_value):
+        cursor = db_manager.get_db().cursor(dictionary=True)
+        sql = f"""SELECT product_name, product.barcode FROM product
+                    INNER JOIN product_category
+                    ON product.id = product_category.product_id
+                        INNER JOIN category
+                        ON category.id = product_category.category_id
+                    WHERE category.category_name = %s
+                    ORDER BY RAND() LIMIT {limit}
+                    """
+        values = (category_value,)
+        cursor.execute(sql, values)
+        data = cursor.fetchall()
+        cursor.close()
+        return data
 
 
 # Catagory MANAGER #
