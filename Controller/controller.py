@@ -4,7 +4,8 @@ from Model.product import Product, ProductCleaner
 from Model.manager import DatabaseManager, ProductManager, \
     CategoryManager, StoreManager, ProductSubstituteManager
 
-from View.views import View_Category, View_Product, View_Substitute
+from View.views import View_Category, View_Product, View_Substitute, \
+                        View_Record
 
 
 config.load('./configuration/config.yml')
@@ -33,7 +34,7 @@ class Controller:
             self.category_menu()
 
         elif value == "2":
-            pass
+            self.record_menu()
 
     def category_menu(self):
         categories = config.value['CATEGORIES']
@@ -96,6 +97,13 @@ class Controller:
 
         elif value == "n":
             print("Merci et à bientôt")
+
+    def record_menu(self):
+
+        product_list = ProductSubstituteManager.get_product_substitute(
+            self.db_manager)
+        view = View_Record(product_list)
+        print(view)
 
     def find_substitute(self, product_barcode, category_value):
 

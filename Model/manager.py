@@ -435,3 +435,21 @@ class ProductSubstituteManager():
 
         db.commit()
         cursor.close()
+
+    @staticmethod
+    def get_product_substitute(db_manager):
+
+        cursor = db_manager.get_db().cursor(dictionary=True)
+        sql = """SELECT  P.barcode, P.product_name AS "product",
+                            S.product_name AS "substitute", S.off_url
+                    FROM product P INNER JOIN
+                    (product_substitute P_S INNER JOIN product S
+                        ON P_S.substitute_id = S.id)
+                    ON P.id = P_S.product_id
+                """
+
+        cursor.execute(sql)
+        data = cursor.fetchall()
+        cursor.close()
+
+        return data

@@ -43,3 +43,21 @@ class View_Substitute(View):
         """
 
         return rpr
+
+
+class View_Record(View):
+    def __init__(self, data):
+        super().__init__(data)
+
+    def __str__(self):
+        rpr = ""
+
+        for element in self.data:
+            rpr += f"""
+            Produit : {element['product']} ({element['barcode']})\n
+            Substitut: {element['substitute']}\n
+            Lien OFF: {element['off_url']}\n        
+                    """
+            rpr += "*"*100
+
+        return rpr
