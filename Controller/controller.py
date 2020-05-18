@@ -87,8 +87,8 @@ class Controller:
             value = input()
 
         if value == "o":
-            product_id = product.product_id
-            substitute_id = substitute.product_id
+            product_id = product.id
+            substitute_id = substitute.id
             db = self.db_manager.get_db()
 
             ProductSubstituteManager.insert_product_substitute_db(
@@ -114,10 +114,6 @@ class Controller:
         ProductCleaner().split_categories(product_list)
 
         substitute_list = utils.filter(product_list, nutriscore)
-
-        # for substitute in substitute_list:
-        #     print(substitute)
-
         substitute = utils.check_intersection(substitute_list, product)
 
         return substitute

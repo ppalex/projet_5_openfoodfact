@@ -175,7 +175,7 @@ class ProductManager():
     @staticmethod
     def get_product_list_by_category_db(db_manager, limit, category_value):
         cursor = db_manager.get_db().cursor(dictionary=True)
-        sql = f"""SELECT product_id, product_name, product.barcode, product.nutriscore_grade
+        sql = f"""SELECT product.id, product_name, product.barcode, product.nutriscore_grade
                     FROM product
                     INNER JOIN product_category
                     ON product.id = product_category.product_id
@@ -193,7 +193,7 @@ class ProductManager():
     @staticmethod
     def get_product_db(db_manager, barcode):
         cursor = db_manager.get_db().cursor(dictionary=True)
-        sql = """SELECT product_id, barcode, product_name, nutriscore_grade,
+        sql = """SELECT product.id, barcode, product_name, nutriscore_grade,
                     GROUP_CONCAT(category_name SEPARATOR ',') AS categories
                     FROM product
                     INNER JOIN product_category
@@ -201,7 +201,7 @@ class ProductManager():
                         INNER JOIN category
                         ON category.id = product_category.category_id
                 WHERE product.barcode = %s
-                GROUP BY product_id
+                GROUP BY product.id
                 """
 
         values = (barcode,)
@@ -213,15 +213,20 @@ class ProductManager():
     @staticmethod
     def get_products_by_nutriscore_db(db_manager, nutriscrore, category):
         cursor = db_manager.get_db().cursor(dictionary=True)
-        sql = """SELECT product_id, barcode, product_name, nutriscore_grade,
+        sql = """SELECT product.id, barcode, product_name, nutriscore_grade,
+                            product_description, off_url, store_name,
                     GROUP_CONCAT(category_name SEPARATOR ',') AS categories
                     FROM product
                     INNER JOIN product_category
                     ON product.id = product_category.product_id
                         INNER JOIN category
                         ON category.id = product_category.category_id
+                        INNER JOIN product_store
+                            ON product.id = product_store.product_id
+                                INNER JOIN store
+                                ON store.id = store_id
                     WHERE product.nutriscore_grade < %s
-                    GROUP BY product_id
+                    GROUP BY product.id
                     HAVING categories LIKE CONCAT('%', %s, '%')
                 """
 
@@ -235,14 +240,7 @@ class ProductManager():
     @staticmethod
     def get_product_by_store_db(db_manager, limit, category_value):
         cursor = db_manager.get_db().cursor(dictionary=True)
-        sql = f"""SELECT product_name, product.barcode FROM product
-                    INNER JOIN product_category
-                    ON product.id = product_category.product_id
-                        INNER JOIN category
-                        ON category.id = product_category.category_id
-                    WHERE category.category_name = %s
-                    ORDER BY RAND() LIMIT {limit}
-                    """
+        sql = """             """
         values = (category_value,)
         cursor.execute(sql, values)
         data = cursor.fetchall()

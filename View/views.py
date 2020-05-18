@@ -32,9 +32,14 @@ class View_Substitute(View):
         super().__init__(data)
 
     def __str__(self):
-        rpr = ""
+
         attr = vars(self.data)
-        for k, v in attr.items():
-            rpr += f"{k} - {v} \n"
+        rpr = f"""
+        Nom: {attr['product_name']} \n
+        Description: {attr['product_description']} \n
+        Nutriscore: {attr['nutriscore_grade']} \n
+        URL: {attr['off_url']} \n
+        Magasin: {attr['store_name']}
+        """
 
         return rpr
