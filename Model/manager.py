@@ -74,6 +74,7 @@ class DatabaseManager(Database):
 
 class ApiManager:
     def __init__(self):
+
         self.data = None
 
     def download_product(self, category_list):

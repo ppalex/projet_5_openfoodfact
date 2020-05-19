@@ -8,6 +8,11 @@ class Database:
     _instance = None
 
     def __new__(self):
+        """This method create an instance of Database.
+
+        Returns:
+            [Object] -- Database object.
+        """
         if not self._instance:
             self._instance = super(Database, self).__new__(self)
             self.db = mysql.connector.connect(

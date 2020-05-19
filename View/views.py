@@ -56,8 +56,7 @@ class View_Record(View):
             rpr += f"""
             Produit : {element['product']} ({element['barcode']})\n
             Substitut: {element['substitute']}\n
-            Lien OFF: {element['off_url']}\n        
+            Lien OFF: {element['off_url']}\n
                     """
             rpr += "*"*100
-
         return rpr
