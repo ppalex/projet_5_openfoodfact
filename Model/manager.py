@@ -12,6 +12,8 @@ config.load('./configuration/config.yml')
 
 class DatabaseManager(Database):
     def __init__(self):
+        """Constructor of the class DatabaseManager.
+        """
         self.category_manager = CategoryManager()
         self.product_manager = ProductManager()
         self.store_manager = StoreManager()
@@ -35,6 +37,8 @@ class DatabaseManager(Database):
         self.db.close()
 
     def create_tables(self):
+        """This method creates all the tables in the DB.
+        """
         db = self.get_db()
         self.category_manager.create_category_table(db)
         self.product_manager.create_product_table(db)
@@ -44,6 +48,11 @@ class DatabaseManager(Database):
         self.product_substitute_manager.create_product_substitute_table(db)
 
     def get_tables(self):
+        """This method return the name of all tables from the db.
+
+        Returns:
+            [List] -- The list contains the name of the tables.
+        """
         db = self.get_db()
         cursor = db.cursor()
         sql = "SHOW TABLES"
@@ -53,6 +62,8 @@ class DatabaseManager(Database):
         return data
 
     def drop_tables(self):
+        """This method drop all the tables from the db.
+        """
         db = self.get_db()
         cursor = db.cursor()
         table_list = self.get_tables()
@@ -74,11 +85,17 @@ class DatabaseManager(Database):
 
 class ApiManager:
     def __init__(self):
-
+        """Constructor of the class ApiManager.
+        """
         self.data = None
 
     def download_product(self, category_list):
+        """This method download products by category from openfoodfact api.
+             The data are recovered in self.data.
 
+        Arguments:
+            category_list {List} -- List of products categories.
+        """
         url = config.value['API']['url']
         headers = {}
         data = []
@@ -103,11 +120,21 @@ class ApiManager:
         self.data = data
 
     def get_all_categories(self):
+        """This method get all categories from products recovered in self.data.
+
+        Returns:
+            [List] -- Contains all the possible categories from products.
+        """
         product_list = self.data
         return [category for product in product_list
                 for category in product.categories]
 
     def get_all_stores(self):
+        """This method get all stores from products recovered in self.data.
+
+        Returns:
+            [List] -- Contains all the possible categories from products.
+        """
         product_list = self.data
 
         return [store for product in product_list
@@ -118,9 +145,16 @@ class ApiManager:
 
 class ProductManager():
     def __init__(self):
+        """Constructor of the class ProductManager.
+        """
         pass
 
     def create_product_table(self, db):
+        """This method create the product table in the db.
+
+        Arguments:
+            db {Database} -- Database.
+        """
         cursor = db.cursor()
         sql = "CREATE TABLE IF NOT EXISTS Product ( \
             id SMALLINT AUTO_INCREMENT PRIMARY KEY, \
@@ -135,6 +169,12 @@ class ProductManager():
         cursor.close()
 
     def insert_product_db(product_list, db):
+        """This method insert Products from list in table.
+
+        Arguments:
+            product_list {List} -- Contains Products objects.
+            db {Database} -- Database.
+        """
         cursor = db.cursor()
 
         for product in product_list:
@@ -161,7 +201,16 @@ class ProductManager():
 
     @staticmethod
     def select_product_db(db, limit):
-        cursor = db.cursor()
+        """This method get products from the db by product name.
+
+        Arguments:
+            db {Database} -- Database.
+            limit {Int} -- Number of data to select.
+
+        Returns:
+            [Dict] -- Contains the data from the request.
+        """
+        cursor = db.cursor(dictionary=True)
 
         sql = f"""SELECT product_name FROM product
                  ORDER BY RAND() LIMIT {limit}
@@ -175,6 +224,16 @@ class ProductManager():
 
     @staticmethod
     def get_product_list_by_category_db(db_manager, limit, category_value):
+        """This method get products by category.
+
+        Arguments:
+            db {Database} -- Database.
+            limit {Int} -- Limit of data to select.
+            category_value {String} -- Food category.
+
+        Returns:
+            [Dict] -- Contains the data from the request.
+        """
         cursor = db_manager.get_db().cursor(dictionary=True)
         sql = f"""SELECT product.id, product_name, product.barcode, product.nutriscore_grade
                     FROM product
@@ -193,6 +252,15 @@ class ProductManager():
 
     @staticmethod
     def get_product_db(db_manager, barcode):
+        """This method get a product and his category by barcode.
+
+        Arguments:
+            db {Database} -- Database.
+            barcode {String} -- Product barcode.
+
+        Returns:
+            Contains the data from the request.
+        """
         cursor = db_manager.get_db().cursor(dictionary=True)
         sql = """SELECT product.id, barcode, product_name, nutriscore_grade,
                     GROUP_CONCAT(category_name SEPARATOR ',') AS categories
@@ -213,6 +281,16 @@ class ProductManager():
 
     @staticmethod
     def get_products_by_nutriscore_db(db_manager, nutriscrore, category):
+        """This method get a list of product by nutriscore.
+
+        Arguments:
+            db {Database} -- Database.
+            nutriscrore {String} -- Nutriscore of the product.
+            category {String} -- Food category.
+
+        Returns:
+            [Dict] -- Contains the data from the request.
+        """
         cursor = db_manager.get_db().cursor(dictionary=True)
         sql = """SELECT product.id, barcode, product_name, nutriscore_grade,
                             product_description, off_url, store_name,
@@ -238,15 +316,15 @@ class ProductManager():
 
         return data
 
-    @staticmethod
-    def get_product_by_store_db(db_manager, limit, category_value):
-        cursor = db_manager.get_db().cursor(dictionary=True)
-        sql = """             """
-        values = (category_value,)
-        cursor.execute(sql, values)
-        data = cursor.fetchall()
-        cursor.close()
-        return data
+    # @staticmethod
+    # def get_product_by_store_db(db_manager, limit, category_value):
+    #     cursor = db_manager.get_db().cursor(dictionary=True)
+    #     sql = """             """
+    #     values = (category_value,)
+    #     cursor.execute(sql, values)
+    #     data = cursor.fetchall()
+    #     cursor.close()
+    #     return data
 
 
 # Catagory MANAGER #
@@ -254,9 +332,16 @@ class ProductManager():
 
 class CategoryManager():
     def __init__(self):
+        """Constructor of the class CategoryManager.
+        """        
         pass
 
     def create_category_table(self, db):
+        """This method create the category table in the db.
+
+        Arguments:
+            db {Database} -- Database.
+        """
         cursor = db.cursor()
         sql = "CREATE TABLE IF NOT EXISTS Category ( \
                 id SMALLINT AUTO_INCREMENT PRIMARY KEY, \
@@ -266,6 +351,12 @@ class CategoryManager():
         cursor.close()
 
     def insert_categories_db(category_list, db):
+        """This method insert category from list in table.
+
+        Arguments:
+            product_list {List} -- Contains Products objects.
+            db {Database} -- Database.
+        """
         cursor = db.cursor()
 
         for category in category_list:
@@ -297,6 +388,11 @@ class StoreManager():
         pass
 
     def create_store_table(self, db):
+        """This method create the store table in the db.
+
+        Arguments:
+            db {Database} -- Database.
+        """
         cursor = db.cursor()
         sql = """CREATE TABLE IF NOT EXISTS Store (
                 id SMALLINT AUTO_INCREMENT PRIMARY KEY,
@@ -308,6 +404,12 @@ class StoreManager():
         cursor.close()
 
     def insert_store_db(store_list, db):
+        """This method insert store from list in table.
+
+        Arguments:
+            store_list {List} -- Contains store name.
+            db {Database} -- Database.
+        """
         cursor = db.cursor()
 
         for store in store_list:
@@ -327,6 +429,11 @@ class ProductCategoryManager():
         pass
 
     def create_product_category_table(self, db):
+        """This method create the product_category table in the db.
+
+        Arguments:
+            db {Database} -- Database.
+        """
         cursor = db.cursor()
 
         sql = """CREATE TABLE IF NOT EXISTS Product_Category ( \
@@ -341,6 +448,12 @@ class ProductCategoryManager():
         cursor.close()
 
     def insert_product_category_db(product_list, db):
+        """This method insert id product and category id from list in table.
+
+        Arguments:
+            product_list {List} -- Contains Products objects.
+            db {Database} -- Database.
+        """
         cursor = db.cursor()
 
         for product in product_list:
@@ -369,6 +482,11 @@ class ProductStoreManager():
         pass
 
     def create_product_store_table(self, db):
+        """This method create the product store table in the db.
+
+        Arguments:
+            db {Database} -- Database.
+        """
         cursor = db.cursor()
         sql = """CREATE TABLE IF NOT EXISTS Product_Store ( \
                 product_id SMALLINT NOT NULL, \
@@ -380,6 +498,12 @@ class ProductStoreManager():
         cursor.close()
 
     def insert_product_store_db(product_list, db):
+        """This method insert product id and store id from list in table.
+
+        Arguments:
+            product_list {List} -- Contains Products objects.
+            db {Database} -- Database.
+        """
         cursor = db.cursor()
 
         for product in product_list:
@@ -409,6 +533,11 @@ class ProductSubstituteManager():
         pass
 
     def create_product_substitute_table(self, db):
+        """This method create the product_substitute table in the db.
+
+        Arguments:
+            db {Database} -- Database.
+        """
         cursor = db.cursor()
         sql = """CREATE TABLE IF NOT EXISTS Product_Substitute ( \
                 product_id SMALLINT NOT NULL, \
@@ -421,12 +550,18 @@ class ProductSubstituteManager():
         cursor.close()
 
     def insert_product_substitute_db(product_id, substitute_id, db):
+        """This method insert product id and product id (substitute) f
+        table.
+
+        Arguments:
+            product_list {List} -- Contains Products objects.
+            db {Database} -- Database.
+        """
         cursor = db.cursor()
 
         sql = """INSERT INTO product_substitute (product_id, substitute_id)
             VALUES (%s, %s)
         """
-
         values = (product_id, substitute_id)
 
         try:

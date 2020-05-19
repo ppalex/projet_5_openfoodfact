@@ -35,6 +35,7 @@ def filter(product_list, n_ref):
 
 
 def check_intersection(product_list, product_selected):
+    
     best_product = product_list[0]
 
     for product in product_list:
