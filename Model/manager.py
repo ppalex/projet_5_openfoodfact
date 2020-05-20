@@ -333,7 +333,7 @@ class ProductManager():
 class CategoryManager():
     def __init__(self):
         """Constructor of the class CategoryManager.
-        """        
+        """
         pass
 
     def create_category_table(self, db):

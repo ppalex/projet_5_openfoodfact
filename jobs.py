@@ -1,14 +1,15 @@
 import Configuration.config as config
-
-from Model.manager import DatabaseManager, ApiManager, ProductManager, \
-                            CategoryManager, StoreManager, \
-                            ProductCategoryManager, ProductStoreManager
+from Model.manager import (ApiManager, CategoryManager, DatabaseManager,
+                           ProductCategoryManager, ProductManager,
+                           ProductStoreManager, StoreManager)
 
 config.load('./configuration/config.yml')
 
 
 def initialize_job():
-
+    """This function is the job to create tables in db and populates db with
+    products from the openfoodfacts base.
+    """
     category_list = config.value['CATEGORIES']
 
     db_manager = DatabaseManager()
@@ -45,6 +46,8 @@ def initialize_job():
 
 
 def drop_tables_job():
+    """This function is the job to drop tables from the database.
+    """
     db_manager = DatabaseManager()
     db_manager.drop_tables()
     db_manager.close_conn()
