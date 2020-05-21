@@ -1,8 +1,7 @@
-from Model.database import Database
-from Model.product import ProductDownloader, ProductCleaner
-from Model.api import Payload
-
 import Configuration.config as config
+from Model.api import Payload
+from Model.database import Database
+from Model.product import ProductCleaner, ProductDownloader
 
 config.load('./configuration/config.yml')
 
@@ -22,18 +21,37 @@ class DatabaseManager(Database):
         self.product_substitute_manager = ProductSubstituteManager()
 
     def get_db(self):
+        """This method return the db from instance.
+
+        Returns:
+            [Object] -- Instance of class DatabaseManager.
+        """
         return self.db
 
     def cursor(self, dic=True):
+        """This method return the cursor from the 'self' db object.
+
+        Keyword Arguments:
+            dic {bool} -- The return statement must be a dict (default: {True})
+
+        Returns:
+            [Cursor] -- Cursor for db.
+        """
         return self.db.cursor(dictionary=dic)
 
     def commit(self):
+        """This method commit data in db.
+        """
         self.db.commit()
 
     def close_cur(self):
+        """This method close the cursor connection.
+        """
         self.db.cursor.close()
 
     def close_conn(self):
+        """This method close the connection with db.
+        """
         self.db.close()
 
     def create_tables(self):

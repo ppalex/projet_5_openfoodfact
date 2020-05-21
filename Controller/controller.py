@@ -1,12 +1,10 @@
 import Configuration.config as config
 import utils
+from Model.manager import (CategoryManager, DatabaseManager, ProductManager,
+                           ProductSubstituteManager, StoreManager)
 from Model.product import Product, ProductCleaner
-from Model.manager import DatabaseManager, ProductManager, \
-    CategoryManager, StoreManager, ProductSubstituteManager
-
-from View.views import View_Category, View_Product, View_Substitute, \
-    View_Record
-
+from View.views import (View_Category, View_Product, View_Record,
+                        View_Substitute)
 
 config.load('./configuration/config.yml')
 
@@ -82,15 +80,20 @@ class Controller:
         product = Product(**products[int(value)])
         product_barcode = product.barcode
 
-        substitute = self.find_substitute(product_barcode, category_value)
-
-        self.substitute_menu(substitute, product)
+        if product.nutriscore_grade == 'a':
+            print("""L'aliment que vous avez sélectionné est déjà suffisamment sain
+                  avec un nutriscore A \n""")
+            self.category_menu()
+        else:
+            substitute = self.find_substitute(product_barcode, category_value)
+            self.substitute_menu(substitute, product)
 
     def substitute_menu(self, substitute, product):
-         """This method displays the substitute menu and wait the input
+        """This method displays the substitute menu and wait the input
         from user to continue.
         """
-        print("Substitut trouvé: \n")
+        print("""Substitut trouvé: \n
+              ***************** \n""")
 
         view = View_Substitute(substitute)
         value = ""
@@ -109,17 +112,27 @@ class Controller:
                 product_id, substitute_id, db)
 
         elif value == "n":
+            self.db_manager.close_conn()
             print("Merci et à bientôt")
 
     def record_menu(self):
-
+        """This method displays the data stored by the user in db.
+        It gets products and their substitutes.
+        """
         product_list = ProductSubstituteManager.get_product_substitute(
             self.db_manager)
         view = View_Record(product_list)
         print(view)
 
     def find_substitute(self, product_barcode, category_value):
+        """
+        Arguments:
+            product_barcode {[type]} -- [description]
+            category_value {[type]} -- [description]
 
+        Returns:
+            [type] -- [description]
+        """
         product = self.product_manager.get_product_db(
             self.db_manager,
             product_barcode)
