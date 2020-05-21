@@ -5,7 +5,7 @@ from Model.manager import DatabaseManager, ProductManager, \
     CategoryManager, StoreManager, ProductSubstituteManager
 
 from View.views import View_Category, View_Product, View_Substitute, \
-                        View_Record
+    View_Record
 
 
 config.load('./configuration/config.yml')
@@ -13,6 +13,11 @@ config.load('./configuration/config.yml')
 
 class Controller:
     def __init__(self):
+        """Constructor of the class Controller.
+        The controller contains DatabaseManager object, ProductManager object
+        CategoryManager object, StoreManager object,
+        ProductSubstituteManager object
+        """
         self.db_manager = DatabaseManager()
         self.product_manager = ProductManager()
         self.category_manager = CategoryManager()
@@ -20,7 +25,9 @@ class Controller:
         self.product_substitute_manager = ProductSubstituteManager()
 
     def init(self):
-
+        """ This method displays the main menu for the user and wait the input
+        from user to continue.
+        """
         value = ""
 
         while value not in ["1", "2"]:
@@ -37,6 +44,9 @@ class Controller:
             self.record_menu()
 
     def category_menu(self):
+        """This method displays the category menu and wait the input
+        from user to continue.
+        """
         categories = config.value['CATEGORIES']
         categories = utils.list_to_dict(categories)
 
@@ -77,6 +87,9 @@ class Controller:
         self.substitute_menu(substitute, product)
 
     def substitute_menu(self, substitute, product):
+         """This method displays the substitute menu and wait the input
+        from user to continue.
+        """
         print("Substitut trouvé: \n")
 
         view = View_Substitute(substitute)
