@@ -52,10 +52,10 @@ class Controller:
 
         expression = [str(x) for x in range(1, len(categories)+1)]
         value = ""
-        print("Sélectionnez la catégorie.")
+        View_Category.print_select()
 
         while value not in expression:
-            print(view)
+            view.print_menu()
             value = input()
 
         category = categories[int(value)]
@@ -72,20 +72,21 @@ class Controller:
 
         products = utils.list_to_dict(products)
         view = View_Product(products)
+
         value = ""
         expression = [str(x) for x in range(1, len(products)+1)]
-        print("Sélectionnez l'aliment.")
+
+        View_Product.print_select()
 
         while value not in expression:
-            print(view)
+            view.print_menu()
             value = input()
 
         product = Product(**products[int(value)])
         product_barcode = product.barcode
 
         if product.nutriscore_grade == 'a':
-            print("""L'aliment que vous avez sélectionné est déjà suffisamment sain
-                  avec un nutriscore A \n""")
+            View_Product.print_nutriscore_a()
             self.category_menu()
         else:
             substitute = utils.find_substitute(product_barcode, category_value,
@@ -97,13 +98,11 @@ class Controller:
         """This method displays the substitute menu and wait the input
         from user to continue.
         """
-        print("""Substitut trouvé: \n ***************** \n""")
-
         view = View_Substitute(substitute)
         value = ""
-        print(view)
-        print("Voulez-vous enregistrer le substitut dans vos favoris?")
-        print("o/n")
+
+        view.print_menu()
+
         while value not in ["o", "n"]:
             value = input()
 
@@ -117,7 +116,7 @@ class Controller:
 
         elif value == "n":
             self.db_manager.close_conn()
-            print("Merci et à bientôt")
+            View_Substitute.print_bye()
 
     def record_menu(self):
         """This method displays the data stored by the user in db.

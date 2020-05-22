@@ -2,10 +2,20 @@ class View:
     def __init__(self, data):
         self.data = data
 
+    def print_menu(self):
+        pass
+
 
 class View_Category(View):
     def __init__(self, data):
         super().__init__(data)
+
+    @staticmethod
+    def print_select():
+        print("Sélectionnez la catégorie.")
+
+    def print_menu(self):
+        print(self)
 
     def __str__(self):
         rpr = ""
@@ -19,6 +29,18 @@ class View_Product(View):
     def __init__(self, data):
         super().__init__(data)
 
+    @staticmethod
+    def print_select():
+        print("Sélectionnez l'aliment.")
+
+    @staticmethod
+    def print_nutriscore_a():
+        print("""L'aliment que vous avez sélectionné est déjà suffisamment sain
+                  avec un nutriscore A \n""")
+
+    def print_menu(self):
+        print(self)
+
     def __str__(self):
         rpr = ""
         for k, v in self.data.items():
@@ -30,6 +52,16 @@ class View_Product(View):
 class View_Substitute(View):
     def __init__(self, data):
         super().__init__(data)
+
+    @staticmethod
+    def print_bye():
+        print("Merci et à bientôt")
+
+    def print_menu(self):
+        print("""Substitut trouvé: \n ***************** \n""")
+        print(self)
+        print("Voulez-vous enregistrer le substitut dans vos favoris?")
+        print("o/n")
 
     def __str__(self):
 
