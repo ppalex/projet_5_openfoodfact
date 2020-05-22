@@ -218,7 +218,7 @@ class ProductManager():
         cursor.close()
 
     @staticmethod
-    def select_product_db(db, limit):
+    def get_product_by_name_db(db, limit):
         """This method get products from the db by product name.
 
         Arguments:
@@ -269,7 +269,7 @@ class ProductManager():
         return data
 
     @staticmethod
-    def get_product_db(db_manager, barcode):
+    def get_product_by_barcode_db(db_manager, barcode):
         """This method get a product and his category by barcode.
 
         Arguments:
@@ -334,17 +334,6 @@ class ProductManager():
 
         return data
 
-    # @staticmethod
-    # def get_product_by_store_db(db_manager, limit, category_value):
-    #     cursor = db_manager.get_db().cursor(dictionary=True)
-    #     sql = """             """
-    #     values = (category_value,)
-    #     cursor.execute(sql, values)
-    #     data = cursor.fetchall()
-    #     cursor.close()
-    #     return data
-
-
 # Catagory MANAGER #
 
 
@@ -361,9 +350,9 @@ class CategoryManager():
             db {Database} -- Database.
         """
         cursor = db.cursor()
-        sql = "CREATE TABLE IF NOT EXISTS Category ( \
-                id SMALLINT AUTO_INCREMENT PRIMARY KEY, \
-                category_name VARCHAR(255) NOT NULL UNIQUE)"
+        sql = """CREATE TABLE IF NOT EXISTS Category (
+                id SMALLINT AUTO_INCREMENT PRIMARY KEY,
+                category_name VARCHAR(255) NOT NULL UNIQUE)"""
         cursor.execute(sql)
         db.commit()
         cursor.close()
@@ -454,11 +443,11 @@ class ProductCategoryManager():
         """
         cursor = db.cursor()
 
-        sql = """CREATE TABLE IF NOT EXISTS Product_Category ( \
-                product_id SMALLINT NOT NULL, \
-                category_id SMALLINT NOT NULL, \
-                CONSTRAINT pk_ProductStore PRIMARY KEY \
-                (product_id, category_id))
+        sql = """CREATE TABLE IF NOT EXISTS Product_Category (
+                product_id SMALLINT NOT NULL,
+                category_id SMALLINT NOT NULL,
+                CONSTRAINT pk_ProductStore
+                PRIMARY KEY (product_id, category_id))
                 """
 
         cursor.execute(sql)
@@ -506,10 +495,11 @@ class ProductStoreManager():
             db {Database} -- Database.
         """
         cursor = db.cursor()
-        sql = """CREATE TABLE IF NOT EXISTS Product_Store ( \
-                product_id SMALLINT NOT NULL, \
-                store_id SMALLINT NOT NULL, \
-                CONSTRAINT pk_ProductStore PRIMARY KEY (product_id, store_id))
+        sql = """CREATE TABLE IF NOT EXISTS Product_Store (
+                product_id SMALLINT NOT NULL,
+                store_id SMALLINT NOT NULL,
+                CONSTRAINT pk_ProductStore
+                PRIMARY KEY (product_id, store_id))
                 """
         cursor.execute(sql)
         db.commit()
@@ -557,10 +547,10 @@ class ProductSubstituteManager():
             db {Database} -- Database.
         """
         cursor = db.cursor()
-        sql = """CREATE TABLE IF NOT EXISTS Product_Substitute ( \
-                product_id SMALLINT NOT NULL, \
-                substitute_id SMALLINT NOT NULL, \
-                    CONSTRAINT pk_ProductSubstitute \
+        sql = """CREATE TABLE IF NOT EXISTS Product_Substitute (
+                product_id SMALLINT NOT NULL,
+                substitute_id SMALLINT NOT NULL,
+                    CONSTRAINT pk_ProductSubstitute
                     PRIMARY KEY (product_id, substitute_id))
                 """
         cursor.execute(sql)

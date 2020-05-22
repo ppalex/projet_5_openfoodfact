@@ -2,7 +2,7 @@ import Configuration.config as config
 import utils
 from Model.manager import (CategoryManager, DatabaseManager, ProductManager,
                            ProductSubstituteManager, StoreManager)
-from Model.product import Product, ProductCleaner
+from Model.product import Product
 from View.views import (View_Category, View_Product, View_Record,
                         View_Substitute)
 
@@ -63,11 +63,14 @@ class Controller:
         self.product_menu(category)
 
     def product_menu(self, category_value):
+        """This method displays the product menu and wait the input
+        from user to continue.
+        """
         products = \
             self.product_manager.get_product_list_by_category_db(
                 self.db_manager, 10, category_value)
 
-        products = utils.format_request(products)
+        products = utils.list_to_dict(products)
         view = View_Product(products)
         value = ""
         expression = [str(x) for x in range(1, len(products)+1)]
@@ -85,15 +88,16 @@ class Controller:
                   avec un nutriscore A \n""")
             self.category_menu()
         else:
-            substitute = self.find_substitute(product_barcode, category_value)
+            substitute = utils.find_substitute(product_barcode, category_value,
+                                               self.db_manager,
+                                               self.product_manager)
             self.substitute_menu(substitute, product)
 
     def substitute_menu(self, substitute, product):
         """This method displays the substitute menu and wait the input
         from user to continue.
         """
-        print("""Substitut trouvé: \n
-              ***************** \n""")
+        print("""Substitut trouvé: \n ***************** \n""")
 
         view = View_Substitute(substitute)
         value = ""
@@ -123,31 +127,3 @@ class Controller:
             self.db_manager)
         view = View_Record(product_list)
         print(view)
-
-    def find_substitute(self, product_barcode, category_value):
-        """
-        Arguments:
-            product_barcode {[type]} -- [description]
-            category_value {[type]} -- [description]
-
-        Returns:
-            [type] -- [description]
-        """
-        product = self.product_manager.get_product_db(
-            self.db_manager,
-            product_barcode)
-
-        product = Product(**product)
-        ProductCleaner.split_string(product)
-        nutriscore = product.nutriscore_grade
-
-        product_list = self.product_manager.get_products_by_nutriscore_db(
-            self.db_manager, nutriscore, category_value)
-
-        product_list = Product.create_product(product_list)
-        ProductCleaner().split_categories(product_list)
-
-        substitute_list = utils.filter(product_list, nutriscore)
-        substitute = utils.check_intersection(substitute_list, product)
-
-        return substitute

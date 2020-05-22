@@ -1,5 +1,7 @@
 import random
 
+from Model.product import Product, ProductCleaner
+
 
 def list_to_dict(list):
     key = 1
@@ -10,13 +12,36 @@ def list_to_dict(list):
     return dic
 
 
-def format_request(dic_data):
-    key = 1
-    dic = {}
-    for element in dic_data:
-        dic[key] = element
-        key += 1
-    return dic
+def find_substitute(product_barcode, category_value, db_manager,
+                    product_manager):
+    """
+    Arguments:
+        product_barcode {String} -- Represents the barcode of the product.
+        category_value {String} -- Represents the generic category value
+                                    of the product.
+
+    Returns:
+        [Product] -- Represent a substitute to the product identified by
+        the product barcode parameter.
+    """
+    product = product_manager.get_product_by_barcode_db(
+        db_manager,
+        product_barcode)
+
+    product = Product(**product)
+    ProductCleaner.split_string(product)
+    nutriscore = product.nutriscore_grade
+
+    product_list = product_manager.get_products_by_nutriscore_db(
+        db_manager, nutriscore, category_value)
+
+    product_list = Product.create_product(product_list)
+    ProductCleaner().split_categories(product_list)
+
+    substitute_list = filter(product_list, nutriscore)
+    substitute = check_intersection(substitute_list, product)
+
+    return substitute
 
 
 def filter(product_list, n_ref):
@@ -55,4 +80,3 @@ def check_intersection(product_list, product_selected):
                 best_product = product
 
     return best_product
-
