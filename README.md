@@ -23,6 +23,7 @@ Use the following command in terminal to install requirements:
 
 ```
 pip install -r requirements.txt
+```
 
 ## Features
 
@@ -34,5 +35,37 @@ pip install -r requirements.txt
 
 ## Prerequisite
 
-First, it is necessary to create a MySql local database.
-Once the databse is created, you can fill the connection information in the following file: Configuration\config.yml
+First, it is necessary to create a local MySql database.
+Once the database is created, you can fill the connection information in the following file: Configuration\config.yml.
+
+Example:
+```
+ DB:
+   host: "localhost"
+   user: "username"
+   password: "yourpassword"
+   database: "databasename"
+```
+
+
+## Installation
+
+To creates the tables in the database with the data from Open Food Facts, you have to run this command:
+
+```
+python __main__.py --job initialize
+```
+
+If you want to drop all the tables from the database you can run this command:
+
+```
+python __main__.py --job drop_tables
+```
+
+## Launch the app
+
+To launch the application, run this command:
+
+```
+python __main__.py
+```
