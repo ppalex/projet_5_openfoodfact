@@ -446,8 +446,12 @@ class ProductCategoryManager():
         sql = """CREATE TABLE IF NOT EXISTS Product_Category (
                 product_id SMALLINT NOT NULL,
                 category_id SMALLINT NOT NULL,
-                CONSTRAINT pk_ProductStore
-                PRIMARY KEY (product_id, category_id))
+                CONSTRAINT pk_ProductCategory
+                PRIMARY KEY (product_id, category_id),
+                FOREIGN KEY (product_id)
+                    REFERENCES product (id),
+                FOREIGN KEY (category_id)
+                    REFERENCES category (id))
                 """
 
         cursor.execute(sql)
@@ -499,7 +503,11 @@ class ProductStoreManager():
                 product_id SMALLINT NOT NULL,
                 store_id SMALLINT NOT NULL,
                 CONSTRAINT pk_ProductStore
-                PRIMARY KEY (product_id, store_id))
+                PRIMARY KEY (product_id, store_id),
+                FOREIGN KEY (product_id)
+                    REFERENCES product (id),
+                FOREIGN KEY (store_id)
+                    REFERENCES store (id))
                 """
         cursor.execute(sql)
         db.commit()
@@ -551,7 +559,11 @@ class ProductSubstituteManager():
                 product_id SMALLINT NOT NULL,
                 substitute_id SMALLINT NOT NULL,
                     CONSTRAINT pk_ProductSubstitute
-                    PRIMARY KEY (product_id, substitute_id))
+                    PRIMARY KEY (product_id, substitute_id),
+                FOREIGN KEY (product_id)
+                    REFERENCES product (id),
+                FOREIGN KEY (substitute_id)
+                    REFERENCES product (id))
                 """
         cursor.execute(sql)
         db.commit()

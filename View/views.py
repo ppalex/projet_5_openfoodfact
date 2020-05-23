@@ -11,9 +11,30 @@ class View:
         pass
 
 
-class View_Category(View):
+class MainView(View):
+    def __init__(self, data=None):
+        """Constructor of class MainView
+
+        Arguments:
+            data {Dict} -- Dictionary that contains categories to print.
+        """
+        super().__init__(data)
+
+    def print_menu(self):
+        print("1 - Quel aliment souhaitez-vous remplacer ?")
+        print("2 - Retrouver mes aliments substitués.")
+        print("3 - Quitter.")
+
+    @staticmethod
+    def print_bye():
+        """This method print the message before closing the app.
+        """
+        print("Merci et à bientôt")
+
+
+class ViewCategory(View):
     def __init__(self, data):
-        """Constructor of class View_Category
+        """Constructor of class ViewCategory
 
         Arguments:
             data {Dict} -- Dictionary that contains categories to print.
@@ -32,7 +53,7 @@ class View_Category(View):
         print(self)
 
     def __str__(self):
-        """This method return the string representation of data.       
+        """This method return the string representation of data.
 
         Returns:
             [String] -- String as numbered list.
@@ -44,9 +65,9 @@ class View_Category(View):
         return rpr
 
 
-class View_Product(View):
+class ViewProduct(View):
     def __init__(self, data):
-        """Constructor of the class View_Product.
+        """Constructor of the class ViewProduct.
 
         Arguments:
              data {Dict} -- Dictionary that contains products to print.
@@ -78,20 +99,14 @@ class View_Product(View):
         return rpr
 
 
-class View_Substitute(View):
+class ViewSubstitute(View):
     def __init__(self, data):
-        """Constructor of the class View_Substitute.
+        """Constructor of the class ViewSubstitute.
 
         Arguments:
             data {Dict} -- Dictionary that contains substitute to print.
         """
         super().__init__(data)
-
-    @staticmethod
-    def print_bye():
-        """This method print the message before closing the app.
-        """
-        print("Merci et à bientôt")
 
     def print_menu(self):
         """This method print the view for substitute.
@@ -100,6 +115,11 @@ class View_Substitute(View):
         print(self)
         print("Voulez-vous enregistrer le substitut dans vos favoris?")
         print("o/n")
+
+    def substitut_not_found(self):
+        print("""Nous n'avons pas trouvé de substitut avec un meilleur
+        nutriscore dans la base.
+        Veuillez alimenter la base avec plus de produit svp. \n""")
 
     def __str__(self):
 
@@ -115,15 +135,24 @@ class View_Substitute(View):
         return rpr
 
 
-class View_Record(View):
+class ViewRecord(View):
     def __init__(self, data):
-        """Constructor of the class View_Record.
+        """Constructor of the class ViewRecord.
 
         Arguments:
-            data {Dict} -- Dictionary that contains substitute saved in 
+            data {Dict} -- Dictionary that contains substitute saved in
             database to print.
         """
         super().__init__(data)
+
+    def print_menu(self):
+        """This method print the view for records substitute.
+        """
+        if not self.data:
+            print("""Aucun substitut enregistré pour le moment
+                \n ***************** \n""")
+        else:
+            print(self)
 
     def __str__(self):
         rpr = ""

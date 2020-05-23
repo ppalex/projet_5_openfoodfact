@@ -1,10 +1,12 @@
+import sys
+
 import Configuration.config as config
 import utils
 from Model.manager import (CategoryManager, DatabaseManager, ProductManager,
                            ProductSubstituteManager, StoreManager)
 from Model.product import Product
-from View.views import (View_Category, View_Product, View_Record,
-                        View_Substitute)
+from View.views import (MainView, ViewCategory, ViewProduct, ViewRecord,
+                        ViewSubstitute)
 
 config.load('./configuration/config.yml')
 
@@ -27,12 +29,10 @@ class Controller:
         from user to continue.
         """
         value = ""
+        main_view = MainView()
 
-        while value not in ["1", "2"]:
-
-            print("1 - Quel aliment souhaitez-vous remplacer ?")
-            print("2 - Retrouver mes aliments substitués.")
-
+        while value not in ["1", "2", "3"]:
+            main_view.print_menu()
             value = input()
 
         if value == "1":
@@ -41,6 +41,10 @@ class Controller:
         elif value == "2":
             self.record_menu()
 
+        elif value == "3":
+            MainView.print_bye()
+            sys.exit()
+
     def category_menu(self):
         """This method displays the category menu and wait the input
         from user to continue.
@@ -48,11 +52,11 @@ class Controller:
         categories = config.value['CATEGORIES']
         categories = utils.list_to_dict(categories)
 
-        view = View_Category(categories)
+        view = ViewCategory(categories)
 
         expression = [str(x) for x in range(1, len(categories)+1)]
         value = ""
-        View_Category.print_select()
+        ViewCategory.print_select()
 
         while value not in expression:
             view.print_menu()
@@ -71,12 +75,12 @@ class Controller:
                 self.db_manager, 10, category_value)
 
         products = utils.list_to_dict(products)
-        view = View_Product(products)
+        view = ViewProduct(products)
 
         value = ""
         expression = [str(x) for x in range(1, len(products)+1)]
 
-        View_Product.print_select()
+        ViewProduct.print_select()
 
         while value not in expression:
             view.print_menu()
@@ -86,7 +90,7 @@ class Controller:
         product_barcode = product.barcode
 
         if product.nutriscore_grade == 'a':
-            View_Product.print_nutriscore_a()
+            ViewProduct.print_nutriscore_a()
             self.category_menu()
         else:
             substitute = utils.find_substitute(product_barcode, category_value,
@@ -98,25 +102,29 @@ class Controller:
         """This method displays the substitute menu and wait the input
         from user to continue.
         """
-        view = View_Substitute(substitute)
+        view = ViewSubstitute(substitute)
         value = ""
 
-        view.print_menu()
+        if not substitute:
+            view.substitut_not_found()
+        else:
+            view.print_menu()
 
-        while value not in ["o", "n"]:
-            value = input()
+            while value not in ["o", "n"]:
+                value = input()
 
-        if value == "o":
-            product_id = product.id
-            substitute_id = substitute.id
-            db = self.db_manager.get_db()
+            if value == "o":
+                product_id = product.id
+                substitute_id = substitute.id
+                db = self.db_manager.get_db()
 
-            ProductSubstituteManager.insert_product_substitute_db(
-                product_id, substitute_id, db)
+                ProductSubstituteManager.insert_product_substitute_db(
+                    product_id, substitute_id, db)
 
-        elif value == "n":
-            self.db_manager.close_conn()
-            View_Substitute.print_bye()
+            elif value == "n":
+                pass
+
+        self.init()
 
     def record_menu(self):
         """This method displays the data stored by the user in db.
@@ -124,5 +132,7 @@ class Controller:
         """
         product_list = ProductSubstituteManager.get_product_substitute(
             self.db_manager)
-        view = View_Record(product_list)
-        print(view)
+        view = ViewRecord(product_list)
+        view.print_menu()
+
+        self.init()
