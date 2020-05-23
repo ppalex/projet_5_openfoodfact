@@ -174,13 +174,13 @@ class ProductManager():
             db {Database} -- Database.
         """
         cursor = db.cursor()
-        sql = "CREATE TABLE IF NOT EXISTS Product ( \
-            id SMALLINT AUTO_INCREMENT PRIMARY KEY, \
-            barcode VARCHAR(50) NOT NULL UNIQUE, \
-            product_name VARCHAR(255) NOT NULL, \
-            nutriscore_grade CHAR(1) NOT NULL, \
-            product_description TEXT NOT NULL, \
-            off_url VARCHAR(255) NOT NULL)"
+        sql = """CREATE TABLE IF NOT EXISTS Product (
+            id SMALLINT AUTO_INCREMENT PRIMARY KEY,
+            barcode VARCHAR(50) NOT NULL UNIQUE,
+            product_name VARCHAR(255) NOT NULL,
+            nutriscore_grade CHAR(1) NOT NULL,
+            product_description TEXT NOT NULL,
+            off_url VARCHAR(255) NOT NULL)"""
 
         cursor.execute(sql)
         db.commit()
