@@ -21,6 +21,8 @@ class MainView(View):
         super().__init__(data)
 
     def print_menu(self):
+        """This method print the main menu.
+        """
         print("1 - Quel aliment souhaitez-vous remplacer ?")
         print("2 - Retrouver mes aliments substitués.")
         print("3 - Quitter.")
@@ -93,6 +95,11 @@ class ViewProduct(View):
         print(self)
 
     def __str__(self):
+        """This method return the string representation of data.
+
+        Returns:
+            [String] -- String as product name + nutriscore.
+        """
         rpr = ""
         for k, v in self.data.items():
             rpr += f"{k} - {v['product_name']} - {v['nutriscore_grade']} \n"
@@ -117,12 +124,18 @@ class ViewSubstitute(View):
         print("o/n")
 
     def substitut_not_found(self):
+        """This method print a message if a substitute is not found.
+        """
         print("""Nous n'avons pas trouvé de substitut avec un meilleur
         nutriscore dans la base.
         Veuillez alimenter la base avec plus de produit svp. \n""")
 
     def __str__(self):
+        """This method return the string representation of data.
 
+        Returns:
+            [String] -- String as product.
+        """
         attr = vars(self.data)
         rpr = f"""
         Nom: {attr['product_name']} \n
@@ -155,6 +168,11 @@ class ViewRecord(View):
             print(self)
 
     def __str__(self):
+        """This method return the string representation of data.
+
+        Returns:
+            [String] -- String as a list of product.
+        """
         rpr = ""
 
         for element in self.data:
