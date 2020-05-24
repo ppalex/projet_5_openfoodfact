@@ -375,7 +375,16 @@ class CategoryManager():
 
     @staticmethod
     def select_category_db(db, limit):
-        cursor = db.cursor()
+        """This method select category name from table category.
+
+        Arguments:
+            db {Database} -- Database.
+            limit {Int} -- Limit of data to select.
+
+        Returns:
+            [Dict] -- Contains the data from the request.
+        """
+        cursor = db.cursor(dictionary=True)
 
         sql = f"""SELECT category_name FROM category
                  ORDER BY RAND() LIMIT {limit}
@@ -474,7 +483,6 @@ class ProductCategoryManager():
                     FROM product, category
                     WHERE category.category_name = %s AND product.barcode = %s
                 """
-
                 values = (category, product.barcode)
 
                 try:
@@ -529,7 +537,6 @@ class ProductStoreManager():
                     FROM product, store
                     WHERE store.store_name = %s AND product.barcode = %s
                 """
-
                 values = (store, product.barcode)
 
                 try:
@@ -594,7 +601,14 @@ class ProductSubstituteManager():
 
     @staticmethod
     def get_product_substitute(db_manager):
+        """This method select products and their substitutes.
 
+        Arguments:
+            db_manager {DatabaseManager}
+
+        Returns:
+            [Dict] -- Contains the data from the request.
+        """
         cursor = db_manager.get_db().cursor(dictionary=True)
         sql = """SELECT  P.barcode, P.product_name AS "product",
                             S.product_name AS "substitute", S.off_url
