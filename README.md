@@ -2,20 +2,20 @@
 
 ## Description
 
-The goal of this project is to create an application which interacts with the Open Food Facts products database. It 
+The goal of this project is to create an application which interacts with the Open Food Facts products database.
 
 The application uses the API from Open Food Fact to download a bunch of products classified by categories.
 
-Once the products are downloaded the application fills a Mysql database.
+Once the products are downloaded the application fills a Mysql database with the data.
 
-Then, a user can launch the program, choose product from categories and the program will compare and propose a substiute to the product.
+Then, a user can launch the program, choose a product from different categories and the program will compare and propose a substitute to the product.
 The substitute is a product healthier than the selected product.
 
-The user can also safe the substitte in the database.
+The user can also safe the substitute in the database.
 
 ## Language
 
-* Python3
+* Python
 
 ## Requirements
 
@@ -30,7 +30,9 @@ pip install -r requirements.txt
 * Look up for products in Open Food Facts database;
 * CLI application;
 * The user interacts with the application in the console;
-* 
+* The user can choose a product and get a substitute with a better nutriscore;
+* The user can save a product and his substitute in the db;
+* The user can consult products saved in db;
 
 
 ## Prerequisite
